@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class Hotel {
     private List<String> amenities = new ArrayList<>();
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -45,4 +45,7 @@ public class Hotel {
 
     @Embedded
     private HotelContactInfo hotelContactInfo;
+
+    @Column(nullable = false)
+    private Boolean active;
 }
