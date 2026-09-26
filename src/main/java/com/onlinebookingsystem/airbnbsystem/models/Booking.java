@@ -63,6 +63,4 @@ public class Booking {
     )
     private Set<Guest> guests;
 
-
-
 }
