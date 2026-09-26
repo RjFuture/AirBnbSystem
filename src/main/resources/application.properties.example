@@ -1,1 +1,12 @@
 spring.application.name=AirBnbSystem
+
+
+#DB Configuration
+
+spring.datasource.url= jdbc:mysql://localhost:3306/airBnb
+spring.datasource.username=username
+spring.datasource.password=password
+
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql = true
