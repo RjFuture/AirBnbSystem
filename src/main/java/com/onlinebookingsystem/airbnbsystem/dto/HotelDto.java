@@ -26,5 +26,4 @@ public class HotelDto {
     private List<String> amenities = new ArrayList<>();
     private HotelContactInfo hotelContactInfo;
     private Boolean active;
-    private User owner_name;
 }
