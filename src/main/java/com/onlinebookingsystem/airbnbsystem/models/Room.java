@@ -23,7 +23,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne // Many belogs to this Room and one to hotel so Many room of same Type one Hotel
+    @ManyToOne(fetch = FetchType.LAZY) // Many belogs to this Room and one to hotel so Many room of same Type one Hotel
     @JoinColumn(name = "hotel_id",nullable = false)
     private Hotel hotel;
 
