@@ -2,6 +2,7 @@ package com.onlinebookingsystem.airbnbsystem.dto;
 
 import com.onlinebookingsystem.airbnbsystem.models.HotelContactInfo;
 import com.onlinebookingsystem.airbnbsystem.models.Room;
+import com.onlinebookingsystem.airbnbsystem.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +14,7 @@ import java.util.List;
 
 
 // todo : -  While further we proceed we break it into HotelRequestDto and Hotel ResponseDto
+//todo : - have to add validation too
 @Data
 public class HotelDto {
 
@@ -24,4 +26,5 @@ public class HotelDto {
     private List<String> amenities = new ArrayList<>();
     private HotelContactInfo hotelContactInfo;
     private Boolean active;
+    private User owner_name;
 }
