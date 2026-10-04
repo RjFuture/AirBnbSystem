@@ -1,6 +1,7 @@
 package com.onlinebookingsystem.airbnbsystem.controller;
 
 
+import com.onlinebookingsystem.airbnbsystem.advice.ResponseResultBody;
 import com.onlinebookingsystem.airbnbsystem.dto.RoomDto;
 import com.onlinebookingsystem.airbnbsystem.repository.RoomRepository;
 import com.onlinebookingsystem.airbnbsystem.service.RoomService;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/admin/hotels/{hotelId}/rooms")
+@ResponseResultBody
 public class RoomAdminController {
 
    private final RoomService roomService;

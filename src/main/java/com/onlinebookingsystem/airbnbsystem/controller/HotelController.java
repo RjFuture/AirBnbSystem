@@ -1,6 +1,7 @@
 package com.onlinebookingsystem.airbnbsystem.controller;
 
 
+import com.onlinebookingsystem.airbnbsystem.advice.ResponseResultBody;
 import com.onlinebookingsystem.airbnbsystem.dto.HotelDto;
 import com.onlinebookingsystem.airbnbsystem.service.HotelService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/hotels")
 @Slf4j
 @RequiredArgsConstructor
+@ResponseResultBody
 public class HotelController {
 
     private final HotelService hotelService;
