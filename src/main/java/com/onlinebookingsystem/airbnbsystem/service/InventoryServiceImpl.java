@@ -37,6 +37,7 @@ public class InventoryServiceImpl implements InventoryService{
        {
            Inventory inventory = Inventory.builder()
                    .date(today).hotel(room.getHotel()).bookedCount(0)
+                   .reservedCount(0)
                    .totalCount(room.getTotalCount()).room(room)
                    .price(room.getBasePrice()).surgeFactor(BigDecimal.ONE)
                    .city(room.getHotel().getCity()).closed(false)

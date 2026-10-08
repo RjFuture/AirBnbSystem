@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -61,7 +62,7 @@ public class Booking {
     @JoinTable(name = "booking_guest",joinColumns = @JoinColumn(name = "booking_id"),
     inverseJoinColumns = @JoinColumn(name = "guest_id")
     )
-    private Set<Guest> guests;
+    private Set<Guest> guests = new HashSet<>();
 
     @Column(nullable = false,precision = 10,scale = 2)
     private BigDecimal amount;
