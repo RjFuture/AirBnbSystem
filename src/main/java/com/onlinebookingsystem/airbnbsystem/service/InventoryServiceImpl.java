@@ -49,11 +49,16 @@ public class InventoryServiceImpl implements InventoryService{
 
     @Override
     public void deleteInventories(Room room) {
+
+        log.info("Deleting the inventories of room with id : {}",room.getId());
         inventoryRepository.deleteByRoom(room);
     }
 
     @Override
     public Page<HotelDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
+
+        log.info("Searching hotels for {} city , from {} to {} ",hotelSearchRequest.getCity(),
+                hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
 
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(),hotelSearchRequest.getSize());
 
