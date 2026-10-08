@@ -3,15 +3,18 @@ package com.onlinebookingsystem.airbnbsystem.repository;
 import com.onlinebookingsystem.airbnbsystem.models.Hotel;
 import com.onlinebookingsystem.airbnbsystem.models.Inventory;
 import com.onlinebookingsystem.airbnbsystem.models.Room;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Repository
@@ -35,4 +38,14 @@ having Count(*)= :dateCount
     , @Param("roomsCount") Integer roomsCount
     , @Param("dateCount") Long dateCount, Pageable pageable
      );
+
+    @Query("""
+select i from Inventory  i where i.room = :roomId and 
+i.date between :checkInDate and :checkOutDate AND 
+(i.totalCount - i.bookedCount)>=:roomsCount
+AND i.closed = false 
+""")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Inventory> findAndLockAvailableInventory(@Param("roomId") Long roomId, @Param("checkInDate") LocalDate checkInDate
+    ,@Param("checkOutDate") LocalDate checkOutDate, @Param("roomsCount") Integer roomsCount);
 }
