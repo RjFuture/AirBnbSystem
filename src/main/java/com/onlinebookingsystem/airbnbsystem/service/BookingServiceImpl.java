@@ -55,7 +55,8 @@ public class BookingServiceImpl implements BookingService{
        List<Inventory> inventoryList= inventoryRepository.findAndLockAvailableInventory(room.getId(),bookingRequestDto.getCheckInDate()
                 ,bookingRequestDto.getCheckOutDate(),bookingRequestDto.getRoomsCount());
 
-       long daysCount = ChronoUnit.DAYS.between(bookingRequestDto.getCheckInDate(),bookingRequestDto.getCheckOutDate());
+       long daysCount = ChronoUnit.DAYS.between(bookingRequestDto.getCheckInDate()
+               ,bookingRequestDto.getCheckOutDate())+1;
 
        if(inventoryList.size()!=daysCount)
        {
@@ -66,7 +67,7 @@ public class BookingServiceImpl implements BookingService{
 
         for(Inventory inventory : inventoryList)
         {
-            inventory.setBookedCount( inventory.getBookedCount() + bookingRequestDto.getRoomsCount());
+            inventory.setReservedCount( inventory.getBookedCount() + bookingRequestDto.getRoomsCount());
         }
 
         inventoryRepository.saveAll(inventoryList);
@@ -78,11 +79,11 @@ public class BookingServiceImpl implements BookingService{
 
         //todo : amount dynamic pricing
 
-        Booking booking = Booking.builder().
-                bookingStatus(BookingStatus.RESERVED)
+        Booking booking = Booking.builder()
+                .bookingStatus(BookingStatus.RESERVED)
                 .hotel(hotel)
                 .room(room)
-                .checkOutDate(bookingRequestDto.getCheckInDate())
+                .checkInDate(bookingRequestDto.getCheckInDate())
                 .checkOutDate(bookingRequestDto.getCheckOutDate())
                 .user(user)
                 .roomsCount(bookingRequestDto.getRoomsCount())

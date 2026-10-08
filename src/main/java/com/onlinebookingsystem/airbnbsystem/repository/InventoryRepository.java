@@ -27,7 +27,7 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
     @Query("""
 select  Distinct i.hotel from Inventory i 
 where i.city = :city AND i.date between :startDate AND :endDate
-AND (i.totalCount - i.bookedCount)>=:roomsCount
+AND (i.totalCount - i.bookedCount-i.reservedCount)>=:roomsCount
 AND i.closed = false 
 group by i.hotel, i.room
 having Count(*)= :dateCount
@@ -40,9 +40,9 @@ having Count(*)= :dateCount
      );
 
     @Query("""
-select i from Inventory  i where i.room = :roomId and 
+select i from Inventory  i where i.room.id = :roomId and 
 i.date between :checkInDate and :checkOutDate AND 
-(i.totalCount - i.bookedCount)>=:roomsCount
+(i.totalCount - i.bookedCount-i.reservedCount)>=:roomsCount
 AND i.closed = false 
 """)
     @Lock(LockModeType.PESSIMISTIC_WRITE)

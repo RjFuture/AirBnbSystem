@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestControllerAdvice
+@RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
 @ResponseResultBody
@@ -18,7 +18,7 @@ public class HotelBookingController {
 
     private final BookingService bookingService;
 
-    @PostMapping
+    @PostMapping("/init")
     public ResponseEntity<BookingDto> initialiseBooking(@RequestBody BookingRequestDto bookingRequestDto)
     {
         return new ResponseEntity<>(bookingService.initialiseBooking(bookingRequestDto), HttpStatus.CREATED);
