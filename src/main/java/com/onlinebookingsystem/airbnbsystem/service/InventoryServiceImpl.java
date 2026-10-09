@@ -1,10 +1,12 @@
 package com.onlinebookingsystem.airbnbsystem.service;
 
 import com.onlinebookingsystem.airbnbsystem.dto.HotelDto;
+import com.onlinebookingsystem.airbnbsystem.dto.HotelPriceDto;
 import com.onlinebookingsystem.airbnbsystem.dto.HotelSearchRequest;
 import com.onlinebookingsystem.airbnbsystem.models.Hotel;
 import com.onlinebookingsystem.airbnbsystem.models.Inventory;
 import com.onlinebookingsystem.airbnbsystem.models.Room;
+import com.onlinebookingsystem.airbnbsystem.repository.HotelMinPriceRepository;
 import com.onlinebookingsystem.airbnbsystem.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class InventoryServiceImpl implements InventoryService{
 
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
+    private final HotelMinPriceRepository hotelMinPriceRepository;
 
     @Override
     public void initializeRoomForAYear(Room room) {
@@ -56,7 +59,7 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public Page<HotelDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
+    public Page<HotelPriceDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
 
         log.info("Searching hotels for {} city , from {} to {} ",hotelSearchRequest.getCity(),
                 hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
@@ -65,11 +68,15 @@ public class InventoryServiceImpl implements InventoryService{
 
         Long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate())+1;
 
-       Page<Hotel> hotelPage =  inventoryRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity()
-        ,hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate(),hotelSearchRequest.getRoomsCount(),
-                dateCount,pageable);
+        // business logic
+        // todo: business logic for 90 days we'll use this HotelMinPriceRepository
+        // todo: after 90 days we'll use Inventory Repository
 
-      return hotelPage.map(hotel -> modelMapper.map(hotel,HotelDto.class));
+             Page<HotelPriceDto> hotelPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity()
+                    , hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(), hotelSearchRequest.getRoomsCount(),
+                    dateCount, pageable);
 
+
+      return hotelPage;
     }
 }
