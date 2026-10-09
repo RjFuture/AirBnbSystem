@@ -48,4 +48,6 @@ AND i.closed = false
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Inventory> findAndLockAvailableInventory(@Param("roomId") Long roomId, @Param("checkInDate") LocalDate checkInDate
     ,@Param("checkOutDate") LocalDate checkOutDate, @Param("roomsCount") Integer roomsCount);
+
+    List<Inventory> findByHotelAndDateBetween(Hotel hotel, LocalDate startDate, LocalDate endDate);
 }
