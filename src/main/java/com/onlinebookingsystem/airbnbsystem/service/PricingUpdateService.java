@@ -9,6 +9,7 @@ import com.onlinebookingsystem.airbnbsystem.models.Inventory;
 import com.onlinebookingsystem.airbnbsystem.repository.HotelMinPriceRepository;
 import com.onlinebookingsystem.airbnbsystem.repository.HotelRepository;
 import com.onlinebookingsystem.airbnbsystem.repository.InventoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class PricingUpdateService {
 
     //Scheduler to update the inventory and HotelsMinPrice Tables every Hour
@@ -33,7 +35,7 @@ public class PricingUpdateService {
     private final HotelMinPriceRepository hotelMinPriceRepository;
     private final PricingService pricingService;
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void updatePrices()
     {
         int page =0;
@@ -68,7 +70,7 @@ public class PricingUpdateService {
 
         Map<LocalDate, BigDecimal> dailyMinimumPrice = inventoryList.stream()
                 .collect(Collectors.groupingBy(Inventory::getDate,Collectors.
-                        mapping(inventory -> inventory.getPrice(),Collectors.minBy(Comparator.naturalOrder()))))
+                        mapping(Inventory::getPrice,Collectors.minBy(Comparator.naturalOrder()))))
                 .entrySet().stream().
                 collect(Collectors.toMap(Map.Entry::getKey, f -> f.getValue().orElse(BigDecimal.ZERO)));
 
