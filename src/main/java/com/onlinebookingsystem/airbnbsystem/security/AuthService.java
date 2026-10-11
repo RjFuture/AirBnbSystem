@@ -4,6 +4,7 @@ package com.onlinebookingsystem.airbnbsystem.security;
 import com.onlinebookingsystem.airbnbsystem.dto.LoginDto;
 import com.onlinebookingsystem.airbnbsystem.dto.SignUpRequestDto;
 import com.onlinebookingsystem.airbnbsystem.dto.UserDto;
+import com.onlinebookingsystem.airbnbsystem.exceptions.ResourceNotFoundException;
 import com.onlinebookingsystem.airbnbsystem.models.User;
 import com.onlinebookingsystem.airbnbsystem.models.enums.Role;
 import com.onlinebookingsystem.airbnbsystem.repository.UserRepository;
@@ -57,5 +58,14 @@ public class AuthService {
        arr[1] = jwtService.generateRefreshToken(user);
 
        return  arr;
+    }
+
+    public String refreshToken(String refreshToken)
+    {
+        Long id = jwtService.getUserIdFromToken(refreshToken);
+
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found for id :"+id));
+
+        return jwtService.generateAccessToken(user);
     }
 }

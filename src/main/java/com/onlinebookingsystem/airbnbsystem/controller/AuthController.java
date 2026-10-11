@@ -13,7 +13,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 
 @ResponseResultBody
@@ -43,4 +46,16 @@ public class AuthController {
         loginResponseDto.setAccessToken(tokens[0]);
         return  ResponseEntity.ok(loginResponseDto);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDto> signup(HttpServletRequest request)
+    {
+       String refreshToken =  Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals("refreshToken"))
+                .map(cookie -> cookie.getValue()).findFirst()
+               .orElseThrow(() -> new AuthenticationServiceException("Refresh Token is not found inside cookies"));
+        return ResponseEntity.ok(new LoginResponseDto(authService.refreshToken(refreshToken)));
+    }
+
+
 }
