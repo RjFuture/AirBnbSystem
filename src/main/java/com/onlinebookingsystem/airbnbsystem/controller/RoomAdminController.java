@@ -5,6 +5,8 @@ import com.onlinebookingsystem.airbnbsystem.advice.ResponseResultBody;
 import com.onlinebookingsystem.airbnbsystem.dto.RoomDto;
 import com.onlinebookingsystem.airbnbsystem.repository.RoomRepository;
 import com.onlinebookingsystem.airbnbsystem.service.RoomService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@Tag(name = "Room Admin")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
 @Slf4j

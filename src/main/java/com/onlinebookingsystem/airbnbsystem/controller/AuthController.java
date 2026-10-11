@@ -7,6 +7,8 @@ import com.onlinebookingsystem.airbnbsystem.dto.LoginResponseDto;
 import com.onlinebookingsystem.airbnbsystem.dto.SignUpRequestDto;
 import com.onlinebookingsystem.airbnbsystem.dto.UserDto;
 import com.onlinebookingsystem.airbnbsystem.security.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
-
+@Tag(name = "Authentication")
 @ResponseResultBody
 @RestController
 @RequestMapping("/auth")

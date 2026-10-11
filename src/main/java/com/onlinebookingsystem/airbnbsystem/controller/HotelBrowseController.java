@@ -9,11 +9,13 @@ import com.onlinebookingsystem.airbnbsystem.dto.HotelSearchRequest;
 import com.onlinebookingsystem.airbnbsystem.models.Hotel;
 import com.onlinebookingsystem.airbnbsystem.service.HotelService;
 import com.onlinebookingsystem.airbnbsystem.service.InventoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Hotel Browse", description = "Public endpoints to search and view hotels")
 @RestController
 @RequiredArgsConstructor
 @ResponseResultBody
