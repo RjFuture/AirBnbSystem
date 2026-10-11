@@ -54,7 +54,6 @@ public class Hotel {
     @JsonIgnore
     private List<Room> rooms;
 
-    @ManyToOne
-//    @JoinColumn(name = "owner_id",nullable = false)
+    @ManyToOne(optional = false)
     private User owner;
 }
