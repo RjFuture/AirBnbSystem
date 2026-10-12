@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,11 @@ public class BookingServiceImpl implements BookingService{
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
     private final GuestRepository guestRepository;
+
+    private  final CheckoutService checkoutService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     @Transactional
@@ -135,7 +141,33 @@ public class BookingServiceImpl implements BookingService{
         return modelMapper.map(booking,BookingDto.class);
     }
 
-      private boolean hasBookingExpired(Booking booking)
+    @Override
+    public String initiatePayments(Long bookingId) {
+        Booking booking =bookingRepository.findById(bookingId).orElseThrow(
+                () -> new ResourceNotFoundException("Booking not found for the id :"+bookingId)
+        );
+
+        User user = getCurrentUser();
+
+        if(!user.equals(booking.getUser()))
+        {
+            throw new UnAuthorisedException("Booking does not belong to this user with Id :" +user.getId());
+        }
+
+        if(hasBookingExpired(booking))
+        {
+            throw new IllegalStateException("Booking has already expired");
+        }
+        // todo :- have to create checkoutService
+
+       String sessionUrl =  checkoutService.getCheckoutSession(booking,frontendUrl+"payments/success",frontendUrl+"payments/failure");
+
+        booking.setBookingStatus(BookingStatus.PAYMENT_PENDING);
+        bookingRepository.save(booking);
+        return  sessionUrl;
+    }
+
+    private boolean hasBookingExpired(Booking booking)
         {
             return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
         }
