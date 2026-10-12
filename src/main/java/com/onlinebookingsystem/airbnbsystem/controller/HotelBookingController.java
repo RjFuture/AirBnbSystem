@@ -44,8 +44,6 @@ public class HotelBookingController {
         String sessionUrl = bookingService.initiatePayments(bookingId);
         return ResponseEntity.ok(Map.of("SessionUrl",sessionUrl));
     }
-
-
-
+    
 
 }

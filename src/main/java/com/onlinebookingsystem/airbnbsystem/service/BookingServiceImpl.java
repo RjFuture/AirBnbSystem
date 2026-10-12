@@ -83,9 +83,6 @@ public class BookingServiceImpl implements BookingService{
         //create the booking
 
 
-
-        //todo : amount dynamic pricing
-
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
                 .hotel(hotel)
@@ -94,7 +91,7 @@ public class BookingServiceImpl implements BookingService{
                 .checkOutDate(bookingRequestDto.getCheckOutDate())
                 .user(getCurrentUser())
                 .roomsCount(bookingRequestDto.getRoomsCount())
-                .amount(BigDecimal.TEN)
+                .amount(BigDecimal.valueOf(100))
                 .build();
 
        Booking savedBooking =  bookingRepository.save(booking);
@@ -116,7 +113,7 @@ public class BookingServiceImpl implements BookingService{
 
         User user = getCurrentUser();
 
-        if(!user.equals(booking.getUser()))
+        if(!user.getId().equals(booking.getUser().getId()))
         {
             throw new UnAuthorisedException("Booking does not belong to this user with Id :" +user.getId());
         }
@@ -149,7 +146,7 @@ public class BookingServiceImpl implements BookingService{
 
         User user = getCurrentUser();
 
-        if(!user.equals(booking.getUser()))
+        if(!user.getId().equals(booking.getUser().getId()))
         {
             throw new UnAuthorisedException("Booking does not belong to this user with Id :" +user.getId());
         }
@@ -160,7 +157,7 @@ public class BookingServiceImpl implements BookingService{
         }
         // todo :- have to create checkoutService
 
-       String sessionUrl =  checkoutService.getCheckoutSession(booking,frontendUrl+"payments/success",frontendUrl+"payments/failure");
+       String sessionUrl =  checkoutService.getCheckoutSession(booking,frontendUrl+"/payments/success",frontendUrl+"/payments/failure");
 
         booking.setBookingStatus(BookingStatus.PAYMENT_PENDING);
         bookingRepository.save(booking);
