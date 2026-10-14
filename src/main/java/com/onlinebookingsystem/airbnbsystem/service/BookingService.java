@@ -3,6 +3,7 @@ package com.onlinebookingsystem.airbnbsystem.service;
 import com.onlinebookingsystem.airbnbsystem.dto.BookingDto;
 import com.onlinebookingsystem.airbnbsystem.dto.BookingRequestDto;
 import com.onlinebookingsystem.airbnbsystem.dto.GuestDto;
+import com.stripe.model.Event;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface BookingService {
     BookingDto addGuests(Long bookingId, List<GuestDto> guestDtoList);
 
     String initiatePayments(Long bookingId);
+
+    void capturePayment(Event event);
 }

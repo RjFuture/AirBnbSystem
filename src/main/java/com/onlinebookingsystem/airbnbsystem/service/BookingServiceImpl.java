@@ -8,6 +8,11 @@ import com.onlinebookingsystem.airbnbsystem.exceptions.UnAuthorisedException;
 import com.onlinebookingsystem.airbnbsystem.models.*;
 import com.onlinebookingsystem.airbnbsystem.models.enums.BookingStatus;
 import com.onlinebookingsystem.airbnbsystem.repository.*;
+import com.stripe.exception.EventDataObjectDeserializationException;
+import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.StripeObject;
+import com.stripe.model.checkout.Session;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,13 +80,13 @@ public class BookingServiceImpl implements BookingService{
 
         for(Inventory inventory : inventoryList)
         {
-            inventory.setReservedCount( inventory.getBookedCount() + bookingRequestDto.getRoomsCount());
+            inventory.setReservedCount( inventory.getReservedCount() + bookingRequestDto.getRoomsCount());
         }
 
         inventoryRepository.saveAll(inventoryList);
 
         //create the booking
-
+   //todo : calculte dynamic amount
 
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
@@ -139,6 +144,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    @Transactional
     public String initiatePayments(Long bookingId) {
         Booking booking =bookingRepository.findById(bookingId).orElseThrow(
                 () -> new ResourceNotFoundException("Booking not found for the id :"+bookingId)
@@ -162,6 +168,45 @@ public class BookingServiceImpl implements BookingService{
         booking.setBookingStatus(BookingStatus.PAYMENT_PENDING);
         bookingRepository.save(booking);
         return  sessionUrl;
+    }
+
+    @Override
+    @Transactional
+    public void capturePayment(Event event) {
+        log.info("Event {} apiVersion={} objectPresent={}", event.getType(), event.getApiVersion(),
+                event.getDataObjectDeserializer().getObject().isPresent());
+
+        if ("checkout.session.completed".equals(event.getType())) {
+
+            EventDataObjectDeserializer deserializer = event.getDataObjectDeserializer();
+            StripeObject stripeObject;
+            try {
+                stripeObject = deserializer.getObject().isPresent()
+                        ? deserializer.getObject().get()
+                        : deserializer.deserializeUnsafe();
+            } catch (EventDataObjectDeserializationException e) {
+                throw new IllegalStateException("Cannot read event " + event.getId(), e);
+            }
+
+            Session session = (Session) stripeObject;
+            String sessionId = session.getId();
+
+        Booking booking =  bookingRepository.findByPaymentSessionId(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found for session Id :"+sessionId));
+
+        booking.setBookingStatus(BookingStatus.CONFIRMED);
+        bookingRepository.save(booking);
+
+        inventoryRepository.findAndLockReservedInventory(booking.getRoom().getId(),booking.getCheckInDate(),booking.getCheckOutDate(),booking.getRoomsCount());
+
+        inventoryRepository.confirmBooking(booking.getRoom().getId(),booking.getCheckInDate(),booking.getCheckOutDate(),booking.getRoomsCount());
+        log.info("Successfullyconfirmed the booking for Booking Id : {} ", booking.getId());
+    }
+    else
+    {
+        log.warn("Unhandled Event type : {}",event.getType());
+    }
+
     }
 
     private boolean hasBookingExpired(Booking booking)
